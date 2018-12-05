@@ -1,6 +1,5 @@
 const request = require('request');
 const Path = require('path');
-const sleep = require('sleep-async')();
 const retryDelaySecs = 5;
 
 module.exports = {
@@ -36,7 +35,7 @@ function getScreenshotReturningTemporaryUrl(apikey, captureRequest) {
       })
       .then( (url) => resolve(url) )
       .catch( (err) => reject(err) );
-  });  
+  });
 }
 
 function captureScreenshot(apikey, captureRequest) {
@@ -94,12 +93,11 @@ function retrieveScreenshotTemporaryUrl(apikey, key) {
           if (showDebugOutput) {
             console.log(`Screenshot not yet ready.. waiting for ${retryDelaySecs} seconds.`);
           }
-          sleep.sleep(
-            retryDelaySecs * 1000, () => {
-              retrieveScreenshotTemporaryUrl(apikey, key)
-                .then( (url) => resolve(url) )
-                .catch( (err) => reject(err) );
-            });
+          setTimeout(() => {
+            retrieveScreenshotTemporaryUrl(apikey, key)
+              .then( (url) => resolve(url) )
+              .catch( (err) => reject(err) );
+          }, retryDelaySecs * 1000);
         }
       }
     });
